@@ -41,7 +41,7 @@ To make Newsify give a brief detail about a news, you **must** ask top 5 news fr
 
 **Skill Category:** News, Entertainment, Social, Education
 
-** Target Audience:**  Any user who wishes to get the personalized news and blogs at any given time of day. There is no such age group restriction or specific age target.
+**Target Audience:**  Any user who wishes to get the personalized news and blogs at any given time of day. There is no such age group restriction or specific age target.
 
 **Brief Description of the Idea:**
 
