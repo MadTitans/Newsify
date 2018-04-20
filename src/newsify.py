@@ -96,16 +96,23 @@ def fetch_news_from_api(intent, session):
     connection = requests.get(
         'https://newsapi.org/v2/top-headlines?q={0}&language=en&apiKey={1}'.format(search_category, NEWS_API))
     news_json = json.loads(connection.content.replace('\r\n', ''))
-    print('Articles Count : {0}'.format(news_json['articles']))
+    print('Articles Count : {0}'.format(len(news_json['articles'])))
     if news_json['articles']:
-        for x in range(0, 6):
+        for x in range(0, 5):
             speech_output += str(news_json['articles'][x]['title']) + '. '
 
+            temp_image_url  = news_json['articles'][x]['urlToImage']
+            if "https://" not in str(temp_image_url):
+                temp_image_url =  str(temp_image_url).replace("http://", "https://")
+
+            temp__url  = news_json['articles'][x]['url']
+            if "https://" not in str(temp__url):
+                temp__url =  str(temp__url).replace("http://", "https://")
             session_attributes['news'].append({
                 'title': news_json['articles'][x]['title'],
                 'description': news_json['articles'][x]['description'],
-                'url': news_json['articles'][x]['url'],
-                'image': news_json['articles'][x]['urlToImage'],
+                'url': temp__url,
+                'image': temp_image_url,
                 'publishing_date': news_json['articles'][x]['publishedAt']
             })
 
@@ -131,8 +138,8 @@ def region_based_news(intent, session):
     search_country = country_name_to_code(intent['slots']['country_of_event']['value'])
     print('Search Country : {0}'.format(search_country))
     print('URL : {0}'.format(
-        'https://newsapi.org/v2/top-headlines?country={0}&language=en&apiKey={1}'.format(
-            search_country, NEWS_API)))
+        'https://newsapi.org/v2/top-headlines?country={0}&language=en&apiKey=c98da384d755499a876fcd6d16caf33d'.format(
+            search_country)))
 
     if not search_country:
         return build_response(session_attributes, build_speechlet_response(
@@ -150,13 +157,22 @@ def region_based_news(intent, session):
     news_json = json.loads(connection.content.replace('\r\n', ''))
     print('Articles Count : {0}'.format(news_json['articles']))
     if news_json['articles']:
-        for x in range(0, 6):
+        for x in range(0, 5):
             speech_output += str(news_json['articles'][x]['title']) + '. '
+
+            temp_image_url  = news_json['articles'][x]['urlToImage']
+            if "https://" not in str(temp_image_url):
+                temp_image_url =  str(temp_image_url).replace("http://", "https://")
+
+            temp__url  = news_json['articles'][x]['url']
+            if "https://" not in str(temp__url):
+                temp__url =  str(temp__url).replace("http://", "https://")
+            
             session_attributes['news'].append({
                 'title': news_json['articles'][x]['title'],
                 'description': news_json['articles'][x]['description'],
-                'url': news_json['articles'][x]['url'],
-                'image': news_json['articles'][x]['urlToImage'],
+                'url': temp__url,
+                'image': temp_image_url,
                 'publishing_date': news_json['articles'][x]['publishedAt']
             })
 
@@ -173,7 +189,6 @@ def news_information(intent, session):
     session_attributes = {}
     reprompt_text = None
     should_end_session = True
-
     news_index = int(single_news_index_maker(intent['slots']['news_index']['value']))
     if news_index == 0:
         news_index = 0
@@ -190,6 +205,12 @@ def news_information(intent, session):
     news_image = session['attributes']['news'][news_index]['image']
     news_publishing_date = session['attributes']['news'][news_index]['publishing_date']
     speech_output = news_description
+
+    if "https://" not in news_image:
+        news_image =  str(news_image).replace("http://", "https://")
+    if "https://" not in news_url:
+        news_url =  str(news_url).replace("http://", "https://")
+
     session_attributes.clear()
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session, news_image))
